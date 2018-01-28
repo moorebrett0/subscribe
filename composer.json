@@ -1,0 +1,44 @@
+{
+    "name": "subscribe/subscibe",
+    "description": "Calendar/Membership plugin",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "subscibe"
+    ],
+    "support": {
+        "docs": "https://github.com/moorebrett0/subscibe/blob/master/README.md",
+        "issues": "https://github.com/moorebrett0/subscibe/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brett Moore and Mailo Arsac",
+            "homepage": "github.com/moorebrett0"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "subscribe\\subscibe\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Subscibe",
+        "handle": "subscibe",
+        "schemaVersion": "1.0.0",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "changelogUrl": "https://raw.githubusercontent.com/moorebrett0/subscibe/master/CHANGELOG.md",
+        "components": {
+            "subscibeService": "subscribe\\subscibe\\services\\SubscibeService"
+        },
+        "class": "subscribe\\subscibe\\Subscibe"
+    }
+}

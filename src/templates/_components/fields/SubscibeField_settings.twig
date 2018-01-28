@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Subscibe plugin for Craft CMS
+ *
+ * SubscibeField Field Settings
+ *
+ * @author    Brett Moore and Mailo Arsac
+ * @copyright Copyright (c) 2018 Brett Moore and Mailo Arsac
+ * @link      github.com/moorebrett0
+ * @package   Subscibe
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("subscribe\\subscibe\\assetbundles\\subscibe\\SubscibeAsset") %}
+
+{{ forms.textField({
+    label: 'Some Attribute',
+    instructions: 'Enter some attribute here.',
+    id: 'someAttribute',
+    name: 'someAttribute',
+    value: field['someAttribute']})
+}}
