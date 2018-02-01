@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+set -e
+echo $@
+
+# Test if Postgres connection is ready
+# if postgres is provisioning it may not be ready in time
+count=0
+until ( pg_isready -d "postgres://${DB_USER}:${DB_PASSWORD}@${DB_SERVER}:${DB_PORT}/${DB_NAME}" &>/dev/null)
+do
+  count=$((count+1))
+  if [ ${count} -gt 62 ]
+  then
+    echo "Postgres didn't become ready in time"
+    exit 1
+  fi
+  sleep 1
+done
+
+# Setup Craft CMS
+/usr/src/app/craft install --interactive=0 \
+    --email=${CRAFT_CP_EMAIL} \
+    --username=${CRAFT_CP_USER} \
+    --password=${CRAFT_CP_PASS} \
+    --siteName=${CRAFT_SITE_NAME} \
+    --siteUrl=${CRAFT_SITE_URL}
+
+# Install Plugin
+plugin_handle=$(composer config extra.handle -d /usr/src/plugin)
+/usr/src/app/craft install/plugin ${plugin_handle} --interactive=0
+
+# Migrate Up
+/usr/src/app/craft migrate/up --interactive=0
+
+exec "$@"
