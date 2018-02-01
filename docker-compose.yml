@@ -16,6 +16,7 @@ services:
       - db
     # env vars are replaced in /craft/config
     environment:
+      PHP_XDEBUG_ENABLED: 1
       LANG: C.UTF-8
       DB_DRIVER: pgsql
       DB_SERVER: db

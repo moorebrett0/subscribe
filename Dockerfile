@@ -28,7 +28,7 @@ RUN apk update \
     && apk del .build-deps \
     && apk --no-cache add curl git openssh \
     && curl -sSL https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version=${COMPOSER_VERSION} \
-    && apk --no-cache add nginx supervisor
+    && apk --no-cache add nginx supervisor postgresql
 
 RUN touch /usr/local/etc/php/php.ini \
     && echo -e "memory_limit=-1" >> /usr/local/etc/php/php.ini \
@@ -42,6 +42,16 @@ RUN sed -i "s|pm = dynamic|pm = ondemand|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|group = www-data|group = nobody|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|listen = .*|listen = [::]:9000|i" /usr/local/etc/php-fpm.d/www.conf
 
+RUN DOCKER_HOST_IP=$(/sbin/ip route|awk '/default/ { print $3 }') \
+    && echo -e "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.default_enable = 0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.remote_enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.remote_port = 9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.var_display_max_depth = -1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.var_display_max_children = -1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.var_display_max_data = -1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.max_nesting_level = 500" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.remote_host = ${DOCKER_HOST_IP}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 # Configure nginx
 COPY config/nginx.conf /etc/nginx/nginx.conf
 
@@ -70,3 +80,4 @@ ENTRYPOINT ["docker-entrypoint"]
 
 EXPOSE 80 443
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
