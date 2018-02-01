@@ -38,8 +38,8 @@ RUN touch /usr/local/etc/php/php.ini \
 RUN sed -i "s|pm = dynamic|pm = ondemand|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|;clear_env = .*|clear_env = no|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|;pm.process_idle_timeout = 10s.*|pm.process_idle_timeout = 60s|i" /usr/local/etc/php-fpm.d/www.conf \
-    && sed -i "s|user = www-data|user = nobody|i" /usr/local/etc/php-fpm.d/www.conf \
-    && sed -i "s|group = www-data|group = nobody|i" /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i "s|user = www-data|user = root|i" /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i "s|group = www-data|group = root|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|listen = .*|listen = [::]:9000|i" /usr/local/etc/php-fpm.d/www.conf
 
 RUN DOCKER_HOST_IP=$(/sbin/ip route|awk '/default/ { print $3 }') \
@@ -61,7 +61,6 @@ COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 WORKDIR /usr/src/app
 # Create new craft3 project
 RUN composer --no-interaction --quiet create-project craftcms/craft /usr/src/app -s beta \
-    && chown -R nobody:nobody /usr/src/app \
     # Generate new security key in the .env file
     && /usr/src/app/craft setup/security-key --interactive=0 \
     # Comment out DB_* vars in the dotenv
@@ -73,6 +72,7 @@ RUN composer --no-interaction --quiet config repositories.repo-name path /usr/sr
     && CRAFT_PLUGIN_NAME=$(composer config name -d /usr/src/plugin) \
     && composer --no-interaction --quiet require "${CRAFT_PLUGIN_NAME} @dev"
 
+#RUN chown -R nobody:nobody /usr/src/app
 
 # Copy entrypoint
 COPY docker-entrypoint /usr/local/bin/docker-entrypoint
