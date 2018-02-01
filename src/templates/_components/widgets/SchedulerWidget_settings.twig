@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Scheduler plugin for Craft CMS
+ *
+ * SchedulerWidget Widget Settings
+ *
+ * @author    BMoore
+ * @copyright Copyright (c) 2018 BMoore
+ * @link      bmoore.com
+ * @package   Scheduler
+ * @since     0.0.1
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("armoore\\scheduler\\assetbundles\\scheduler\\SchedulerAsset") %}
+
+{{ forms.textField({
+    label: 'Message',
+    instructions: 'Enter a message here.',
+    id: 'message',
+    name: 'message',
+    value: widget['message']})
+}}

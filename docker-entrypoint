@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+set -e
+
+# Setup Craft CMS
+/usr/src/app/craft install --interactive=0 \
+    --email=${CRAFT_CP_EMAIL} \
+    --username=${CRAFT_CP_USER} \
+    --password=${CRAFT_CP_PASS} \
+    --siteName=${CRAFT_SITE_NAME} \
+    --siteUrl=${CRAFT_SITE_URL}
+
+# Install Plugin
+plugin_handle=$(composer config extra.handle -d /usr/src/plugin)
+/usr/src/app/craft install/plugin ${plugin_handle} --interactive=0
+
+# Migrate Up
+/usr/src/app/craft migrate/up --interactive=0
+
+exec "$@"

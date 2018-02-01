@@ -1,0 +1,40 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Scheduler plugin for Craft CMS 3.x
+ *
+ * Scheduler index.twig
+ *
+ * @author    BMoore
+ * @copyright Copyright (c) 2018 BMoore
+ * @link      bmoore.com
+ * @package   Scheduler
+ * @since     0.0.1
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("armoore\\scheduler\\assetbundles\\scheduler\\SchedulerAsset") %}
+{% do view.registerAssetBundle("armoore\\scheduler\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{% set docsUrl = "https://github.com/bmoore/scheduler/blob/master/README.md" %}
+
+{% set title = "Scheduler" %}
+
+{% set pluginCpUrl = url('scheduler') %}
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@armoore/scheduler/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{% set extraPageHeaderHtml %}
+    <div class="buttons">
+        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('scheduler') }}</a>
+    </div>
+{% endset %}
+
+{% set content %}
+    <h2>{{ "Index CP Section body goes here"|t('scheduler') }}</h2>
+    <img src="{{ iconUrl }}" height="64" width="64" />
+    <p class="textline"></p>
+{% endset %}

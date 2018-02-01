@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Scheduler plugin for Craft CMS
+ *
+ * SchedulerField Field Settings
+ *
+ * @author    BMoore
+ * @copyright Copyright (c) 2018 BMoore
+ * @link      bmoore.com
+ * @package   Scheduler
+ * @since     0.0.1
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("armoore\\scheduler\\assetbundles\\scheduler\\SchedulerAsset") %}
+
+{{ forms.textField({
+    label: 'Some Attribute',
+    instructions: 'Enter some attribute here.',
+    id: 'someAttribute',
+    name: 'someAttribute',
+    value: field['someAttribute']})
+}}

@@ -1,0 +1,44 @@
+version: '3.4'
+services:
+  web:
+    build:
+      context: .
+      args:
+        CRAFT_SITE_NAME: Scheduler Plugin
+        CRAFT_SITE_URL: http://localhost:8080
+    ports:
+      - 8080:80
+    volumes:
+      - ./:/usr/src/plugin
+    networks:
+      - craft
+    depends_on:
+      - db
+    # env vars are replaced in /craft/config
+    environment:
+      LANG: C.UTF-8
+      DB_DRIVER: pgsql
+      DB_SERVER: db
+      DB_DATABASE: craft
+      DB_NAME: craft
+      DB_PORT: 5432
+      DB_USER: craft
+      DB_PASSWORD: password
+      DB_SCHEMA: public
+
+  db:
+    image: postgres:10-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: craft
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: craft
+    volumes:
+      # Persistent data
+      - /var/lib/mysql
+    networks:
+      craft:
+        aliases:
+          - db
+networks:
+    craft:

@@ -1,0 +1,24 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Scheduler plugin for Craft CMS
+ *
+ * SchedulerUtility Utility Content
+ *
+ * @author    BMoore
+ * @copyright Copyright (c) 2018 BMoore
+ * @link      bmoore.com
+ * @package   Scheduler
+ * @since     0.0.1
+ */
+#}
+
+<h1>SchedulerUtility</h1>
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@armoore/scheduler/assetbundles/schedulerutilityutility/dist', true) ~ '/img/SchedulerUtility-icon.svg' %}
+
+<img src="{{ iconUrl }}" height="64" width="64" />
+
+<p>Your Utility content goes here</p>
+
+<p>{{ someVar }}</p>

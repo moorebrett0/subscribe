@@ -1,0 +1,44 @@
+{
+    "name": "armoore/scheduler",
+    "description": "S",
+    "type": "craft-plugin",
+    "version": "0.0.1",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "scheduler"
+    ],
+    "support": {
+        "docs": "https://github.com/bmoore/scheduler/blob/master/README.md",
+        "issues": "https://github.com/bmoore/scheduler/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "BMoore",
+            "homepage": "http://bmoore.com"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "armoore\\scheduler\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Scheduler",
+        "handle": "scheduler",
+        "schemaVersion": "0.0.1",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "changelogUrl": "https://raw.githubusercontent.com/bmoore/scheduler/master/CHANGELOG.md",
+        "components": {
+            "schedulerService": "armoore\\scheduler\\services\\SchedulerService"
+        },
+        "class": "armoore\\scheduler\\Scheduler"
+    }
+}
