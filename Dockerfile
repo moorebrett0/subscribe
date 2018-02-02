@@ -12,7 +12,6 @@ ENV CRAFT_CP_PASS ${CRAFT_CP_PASS:-password}
 ENV CRAFT_SITE_NAME ${CRAFT_SITE_NAME:-Plugin}
 ENV CRAFT_SITE_URL ${CRAFT_SITE_URL:-http://localhost}
 
-
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp
 ENV COMPOSER_VERSION 1.6.2
@@ -30,28 +29,33 @@ RUN apk update \
     && curl -sSL https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version=${COMPOSER_VERSION} \
     && apk --no-cache add nginx supervisor postgresql
 
-RUN touch /usr/local/etc/php/php.ini \
-    && echo -e "memory_limit=-1" >> /usr/local/etc/php/php.ini \
+# Setup PHP.ini
+RUN echo -e "memory_limit=-1" >> /usr/local/etc/php/php.ini \
     && echo -e "[Date]\ndate.timezone = UTC" >> /usr/local/etc/php/php.ini \
-    && echo -e "[Cgi]\ncgi.fix_pathinfo= 0" >> /usr/local/etc/php/php.ini
-
-RUN sed -i "s|pm = dynamic|pm = ondemand|i" /usr/local/etc/php-fpm.d/www.conf \
+    && echo -e "[Cgi]\ncgi.fix_pathinfo= 0" >> /usr/local/etc/php/php.ini \
+    # Setup PHP-fpm
+    && sed -i "s|pm = dynamic|pm = ondemand|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|;clear_env = .*|clear_env = no|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|;pm.process_idle_timeout = 10s.*|pm.process_idle_timeout = 60s|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|user = www-data|user = root|i" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s|group = www-data|group = root|i" /usr/local/etc/php-fpm.d/www.conf \
-    && sed -i "s|listen = .*|listen = [::]:9000|i" /usr/local/etc/php-fpm.d/www.conf
-
-RUN DOCKER_HOST_IP=$(/sbin/ip route|awk '/default/ { print $3 }') \
+    && sed -i "s|listen = .*|listen = [::]:9000|i" /usr/local/etc/php-fpm.d/www.conf \
+    # Setup XDebug
     && echo -e "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo -e "xdebug.default_enable = 0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo -e "xdebug.remote_enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo -e "xdebug.remote_port = 9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.profiler_enable = 0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.profiler_output_dir=/usr/src/app" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo -e "xdebug.var_display_max_depth = -1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo -e "xdebug.var_display_max_children = -1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo -e "xdebug.var_display_max_data = -1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo -e "xdebug.max_nesting_level = 500" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo -e "xdebug.remote_host = ${DOCKER_HOST_IP}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    && echo -e "xdebug.remote_enable = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.remote_autostart = 1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.remote_connect_back = 0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.remote_port = 9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo -e "xdebug.remote_host = docker.for.mac.localhost" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 # Configure nginx
 COPY config/nginx.conf /etc/nginx/nginx.conf
 
@@ -71,8 +75,6 @@ ADD . /usr/src/plugin
 RUN composer --no-interaction --quiet config repositories.repo-name path /usr/src/plugin \
     && CRAFT_PLUGIN_NAME=$(composer config name -d /usr/src/plugin) \
     && composer --no-interaction --quiet require "${CRAFT_PLUGIN_NAME} @dev"
-
-#RUN chown -R nobody:nobody /usr/src/app
 
 # Copy entrypoint
 COPY docker-entrypoint /usr/local/bin/docker-entrypoint
