@@ -17,6 +17,8 @@ services:
     # env vars are replaced in /craft/config
     environment:
       PHP_XDEBUG_ENABLED: 1
+      XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
+      PHP_IDE_CONFIG: "serverName=xDebug"
       LANG: C.UTF-8
       DB_DRIVER: pgsql
       DB_SERVER: db
@@ -37,6 +39,8 @@ services:
     volumes:
       # Persistent data
       - /var/lib/mysql
+    ports:
+      - 54321:5432
     networks:
       craft:
         aliases:
